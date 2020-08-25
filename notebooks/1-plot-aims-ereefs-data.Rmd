@@ -1,0 +1,113 @@
+---
+title: "Access AIMS eReefs data with R"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+---
+
+This tutorial is based on the article [How to open and work with NetCDF data in R](https://rpubs.com/boyerag/297592).
+
+## Load the required R packages
+First of all, load the necessary libraries.
+
+```{r results="hide"}
+library(ncdf4) # package for netcdf manipulation
+library(raster) # package for raster manipulation
+library(ggplot2) # package for plotting
+library(rgdal) # package for geospatial analysis
+```
+## Define which data to be plotted.
+In this section we define which data we want to read and plot.
+
+- **inputFile**  
+  The netCDF input file. This can either be a downloaded file (see [How to manually download derived data from THREDDS](http://ereefs.aims.local/ereefs-aims/help/how-to-manually-download-derived-data)) or a  OPeNDAP URL from the [AIMS THREDDS server](http://thredds.ereefs.aims.gov.au/thredds/catalog.html). For this tutorial we are using the OPeNDAP URL for the file "gbr4_v2-daily-monthly-2010-09.nc".
+- **selectedVariable**  
+  The name of the variable in the netCDF file.
+- **selectedTimeIndex**  
+  The time slice in the netCDF file. For example, in the netCDF file "gbr4_v2-daily-monthly-2010-09.nc" the time steps are "days". This means if you select `selectedTimeIndex=2` it refers to the second day in this file, which is 02/09/2010.
+- **selectedDepthIndex**  
+  The depth slice in the netCDF file. See the following table for a mapping of index to value:
+
+  Index (k) | Hydrodynamic 1km model | Hydrodynamic and BioGeoChemical 4km model
+  ---|---|---
+  1 | -140.00 m | -145.00 m
+  2 | -120.00 m | -120.00 m
+  3 | -103.00 m | -103.00 m
+  4 | -88.00 m | -88.00 m
+  5 | -73.00 m | -73.00 m
+  6 | -60.00 m | -60.00 m
+  7 | -49.00 m | -49.00 m
+  8 | -39.50 m |-39.50 m
+  9 | -31.00 m | -31.00 m
+  10 | -24.00 m | -23.75 m
+  11 | -18.00 m | -17.75 m
+  12 | -13.00 m | -12.75 m
+  13 | -9.00 m | -8.80 m
+  14 | -5.25 m | -5.55 m
+  15 | -2.35 m | -3.00 m
+  16 | -0.50 m | -1.50 m
+  17 | n/a | -0.50 m
+
+```{r}
+# OPeNDAP URL to file EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc. Hydrodynamic 4km model, daily data for the month September 2010
+input_file <- "http://thredds.ereefs.aims.gov.au/thredds/dodsC/s3://aims-ereefs-public-prod/derived/ncaggregate/ereefs/gbr4_v2/daily-monthly/EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc"
+input_file
+
+# The "temperature" variable
+selectedVariable <- "temp"
+selectedVariable
+
+# 2nd of September 2010
+selectedTimeIndex <- 2
+selectedTimeIndex
+
+# -1.50 m depth
+selectedDepthIndex <- 16
+selectedDepthIndex
+```
+## Read in the netCDF file contents
+Read in the netCDF file contents and store the latitude, longitude, time and depth data in variables for later use.
+```{r}
+nc_data <- nc_open(input_file)
+
+lon <- ncvar_get(nc_data, "longitude")
+head(lon) # look at the first few entries in the longitude vector
+
+lat <- ncvar_get(nc_data, "latitude")
+head(lat) # look at the first few entries in the latitude vector
+
+time <- ncvar_get(nc_data, "time")
+head(time) # look at the first few entries in the time vector
+
+depth <- ncvar_get(nc_data, "zc")
+head(depth) # look at the first few entries in the depth vector
+```
+Read in the data from the selected variable and select the time and depth slice.
+```{r}
+variableData.slice <- ncvar_get(nc = nc_data,
+                                varid = selectedVariable,
+                                start = c(1, 1, selectedDepthIndex, selectedTimeIndex),
+                                count = c(length(lon), length(lat), 1, 1))
+dim(variableData.slice)
+
+```
+Now that all data is stored in memory, close the netCDF file.
+```{r}
+nc_close(nc_data)
+print("file closed")
+```
+## Working with the data
+
+Save the data in a raster. We also need to transpose and flip to orient the data correctly.
+```{r}
+r <- raster(t(variableData.slice), xmn = min(lon), xmx = max(lon), ymn = min(lat), ymx = max(lat), crs = CRS("+init=epsg:4326"))
+r <- flip(r, direction = 'y')
+dim(r)
+```
+## Plotting
+Finally plot the data.
+
+```{r}
+plot(r)
+```
