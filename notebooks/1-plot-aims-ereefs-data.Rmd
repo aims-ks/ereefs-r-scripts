@@ -21,11 +21,11 @@ library(rgdal) # package for geospatial analysis
 In this section we define which data we want to read and plot.
 
 - **inputFile**  
-  The netCDF input file. This can either be a downloaded file (see [How to manually download derived data from THREDDS](http://ereefs.aims.local/ereefs-aims/help/how-to-manually-download-derived-data)) or a  OPeNDAP URL from the [AIMS THREDDS server](http://thredds.ereefs.aims.gov.au/thredds/catalog.html). For this tutorial we are using the OPeNDAP URL for the file "gbr4_v2-daily-monthly-2010-09.nc".
+  The netCDF input file. This can either be a downloaded file (see [How to manually download derived data from THREDDS](http://ereefs.aims.local/ereefs-aims/help/how-to-manually-download-derived-data)) or a  OPeNDAP URL from the [AIMS THREDDS server](http://thredds.ereefs.aims.gov.au/thredds/catalog.html). For this tutorial we are using the OPeNDAP URL for the file "EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc".
 - **selectedVariable**  
   The name of the variable in the netCDF file.
 - **selectedTimeIndex**  
-  The time slice in the netCDF file. For example, in the netCDF file "gbr4_v2-daily-monthly-2010-09.nc" the time steps are "days". This means if you select `selectedTimeIndex=2` it refers to the second day in this file, which is 02/09/2010.
+  The time slice in the netCDF file. For example, in the netCDF file "EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc" the time steps are "days". This means if you select `selectedTimeIndex=2` it refers to the second day in this file, which is 02/09/2010.
 - **selectedDepthIndex**  
   The depth slice in the netCDF file. See the following table for a mapping of index to value:
 
@@ -50,7 +50,7 @@ In this section we define which data we want to read and plot.
   17 | n/a | -0.50 m
 
 ```{r}
-# OPeNDAP URL to file EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc. Hydrodynamic 4km model, daily data for the month September 2010
+# OPeNDAP URL to file "EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc". Hydrodynamic 4km model, daily data for the month September 2010
 input_file <- "http://thredds.ereefs.aims.gov.au/thredds/dodsC/s3://aims-ereefs-public-prod/derived/ncaggregate/ereefs/gbr4_v2/daily-monthly/EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc"
 input_file
 
