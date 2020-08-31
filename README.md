@@ -13,6 +13,10 @@ List of notebooks:
 
 ## Run scripts
 
+The scripts are created as [R Markdown](https://rmarkdown.rstudio.com/) notebooks. This format is supported out-of-the-box 
+by RStudio. If you prefer to run the scripts without RStudio you can find more information about installing and 
+running R Markdown in the free online book [R Markdown: The Definitive Guide](https://bookdown.org/yihui/rmarkdown/).
+
 You can either run the scripts in your local environment or with Docker. When running in your local environment, please
 make sure to install all the dependency packages defined in the top section of each script. This step is not necessary
 when using the Docker container as all dependencies are installed automatically.
