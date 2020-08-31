@@ -20,13 +20,13 @@ library(rgdal) # package for geospatial analysis
 ## Define which data to be plotted.
 In this section we define which data we want to read and plot.
 
-- **inputFile**  
+- **inputFile**
   The netCDF input file. This can either be a downloaded file (see [How to manually download derived data from THREDDS](http://ereefs.aims.local/ereefs-aims/help/how-to-manually-download-derived-data)) or a  OPeNDAP URL from the [AIMS THREDDS server](http://thredds.ereefs.aims.gov.au/thredds/catalog.html). For this tutorial we are using the OPeNDAP URL for the file "EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc".
-- **selectedVariable**  
+- **selectedVariable**
   The name of the variable in the netCDF file.
-- **selectedTimeIndex**  
+- **selectedTimeIndex**
   The time slice in the netCDF file. For example, in the netCDF file "EREEFS_AIMS-CSIRO_gbr4_v2_hydro_daily-monthly-2010-09.nc" the time steps are "days". This means if you select `selectedTimeIndex=2` it refers to the second day in this file, which is 02/09/2010.
-- **selectedDepthIndex**  
+- **selectedDepthIndex**
   The depth slice in the netCDF file. See the following table for a mapping of index to value:
 
   Index (k) | Hydrodynamic 1km model | Hydrodynamic and BioGeoChemical 4km model
@@ -97,7 +97,7 @@ Now that all data is stored in memory, close the netCDF file.
 nc_close(nc_data)
 print("file closed")
 ```
-## Working with the data
+## Prepare data
 
 Save the data in a raster. We also need to transpose and flip to orient the data correctly.
 ```{r}
@@ -106,7 +106,7 @@ r <- flip(r, direction = 'y')
 dim(r)
 ```
 ## Plotting
-Finally plot the data.
+Finally, plot the data.
 
 ```{r}
 plot(r)
